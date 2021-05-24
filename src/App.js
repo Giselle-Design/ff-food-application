@@ -1,5 +1,5 @@
 
-import React, {Component, Fragment} from 'react';
+import React, { useState, Fragment } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.css';
 import Navbar from './components/layout/Navbar'
@@ -12,18 +12,16 @@ import About from './components/pages/About'
 import axios from 'axios';
 
 
-class App extends Component {
-  state = {
-    foods: [],
-    foodName: [],
-    loading: false,
-    alert: null
-  };
-
+const App = () => {
+  const [ foods, setFoods ] = useState([]);
+  const [ foodName, setFoodName ] = useState([]);
+  const [ loading, setLoading ] = useState(false);
+  const [ alert, setAlert ] = useState(null);
   
+
   // Search Foods
-  searchFoods = async (text) => {
-    this.setState({ loading: true });
+  const searchFoods = async (text) => {
+    setLoading(true);
 
     const options = {
       method: 'GET',
@@ -36,11 +34,12 @@ class App extends Component {
     };
 
      if(!text) {
-       this.setState({ loading: false})
+      setLoading(false);
        return null
      } else {
       let res = await axios.request(options);
-      this.setState({ foods: res.data.results, loading: false})
+      setFoods(res.data.results);
+      setLoading(false);
       //  console.log(res.data)
      }
       
@@ -48,8 +47,8 @@ class App extends Component {
 
   // Get single Food
 
-  getFood = async (favFood) => {
-    this.setState({ loading: true });
+  const getFood = async (favFood) => {
+    setLoading(true);
 
     const options = {
       method: 'GET',
@@ -63,25 +62,26 @@ class App extends Component {
 
     
      let res = await axios.request(options);
-     this.setState({ foodName: res.data, loading: false})
+     setFoodName(res.data);
+     setLoading(false);
       //  console.log(res.data)
      
   }
   
 
   // Clear Foods from state
-  clearFoods = () => this.setState({ foods: [], loading: false })
+  const clearFoods = () => {
+    setFoods([]);
+    setLoading(false);
+  }
   
   // Setting Alert when a user doesn't enter anything inside the search input
-  setAlert = (msg, type) => {
-    this.setState({ alert: {msg: msg, type: type }});
+  const showAlert = (msg, type) => {
+    setAlert({msg, type});
   // Defining setTimeout method for vanishing alert component after 2000ms  
-    setTimeout(() => this.setState({ alert: null }), 2000)
+    setTimeout(() => setAlert(null), 2000)
   };
 
-   
-  render(){
-    const { foods, loading, alert, foodName } = this.state
     return (
       <Router>
       <div className="App">
@@ -92,10 +92,10 @@ class App extends Component {
             <Route exact path='/' render={ props => (
               <Fragment>
                   <Search 
-                    searchFoods={this.searchFoods}  
-                    clearFoods={this.clearFoods} 
+                    searchFoods={searchFoods}  
+                    clearFoods={clearFoods} 
                     showClear= {foods.length > 0 ? true : false}
-                    setAlert={this.setAlert}
+                    setAlert={showAlert}
                   />
                   <Foods loading={loading} foods={foods}/>
               </Fragment>
@@ -103,7 +103,7 @@ class App extends Component {
             />
             <Route exact path="/about" component={About}/>
             <Route exact path="/food/:id" render={props => (
-              <Food {...props} getFood={this.getFood} foodName={foodName} loading={loading}/>
+              <Food {...props} getFood={getFood} foodName={foodName} loading={loading}/>
             )} />
           </Switch>  
          
@@ -111,8 +111,6 @@ class App extends Component {
       </div>
       </Router>
     );
-
-  }
   
 }
 

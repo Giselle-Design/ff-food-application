@@ -1,21 +1,17 @@
-import React, {Component, Fragment} from 'react';
+import React, { useEffect } from 'react';
 import Spinner from "../layout/Spinner";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom"
 
-export class Food extends Component {
-  componentDidMount(){
-    this.props.getFood(this.props.match.params.id);
-  }
+const  Food = ({ foodName, loading, getFood, match }) => {
+  useEffect(() => {
+    getFood(match.params.id);
+    // eslint-disable-next-line
+  }, []);
 
-  static propTypes = {
-    loading: PropTypes.bool,
-    getFood: PropTypes.func.isRequired,
-  }
 
-  render() {
-    const { name,  original_video_url} = this.props.foodName;
-    const { loading } = this.props;
+  const { name,  original_video_url} = foodName;
+    
     if(loading) return <Spinner/>;
     return (
       <div className="container" style={{textAlign: "center", marginTop: "50px"}}>
@@ -32,11 +28,13 @@ export class Food extends Component {
    
        
     )
-  }
+  
 }
 
-
-
+Food.propTypes = {
+  loading: PropTypes.bool,
+  getFood: PropTypes.func.isRequired,
+}
 
 
 export default Food

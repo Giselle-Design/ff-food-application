@@ -1,54 +1,32 @@
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 
 
-export class Search extends Component {
-    state = {
-        text: ''
-    };
+const Search = ({ searchFoods, clearFoods, showClear, setAlert }) => {
+   const [ text, setText] = useState('');
 
-    static propTypes = {
-        searchFoods: PropTypes.func.isRequired,
-        clearFoods: PropTypes.func.isRequired,
-        showClear: PropTypes.bool.isRequired,
-        setAlert: PropTypes.func.isRequired,
-    };
-
-    onSubmit = (e) => {
+    
+    const onSubmit = (e) => {
         // a preventDefault is called on the event when submitting the form to prevent a browser reload/refresh. 
         e.preventDefault();
-        if(this.state.text === ''){
-            this.props.setAlert("Please Enter Name of Food", 'danger');
+        if(text === ''){
+            setAlert("Please Enter Name of Food", 'danger');
         } else {
-            this.props.searchFoods(this.state.text);
-            this.setState({ text: '' });
-    };
+            searchFoods(text);
+            setText('');
         }
+    }
         
-
-    //Note: If we didnt use arrow function here we should use bind method inside 
-    //the form tag {this.onSubmit.bind(this)} otherwise we have an error
-
-    // onSubmit(e){
-    //     e.preventDefault()
-    //     console.log(this.sate.text)
-    // }
    
-    onChange = (e) => this.setState({[e.target.name]: e.target.value});
-    
-
-    render() {
-
-        const { clearFoods, showClear } = this.props
-
+    const onChange = (e) => setText(e.target.value);
         return (
             <div>
-                <form onSubmit={this.onSubmit} className="form">
+                <form onSubmit={onSubmit} className="form">
                     <input 
                        type="text" 
                        name="text" 
-                       value={this.state.text} 
-                       onChange={this.onChange}
+                       value={text} 
+                       onChange={onChange}
                        placeholder="Search Foods..." 
                     />
                     <input 
@@ -66,7 +44,16 @@ export class Search extends Component {
               
             </div>
         )
-    }
+    
 }
+
+
+Search.propTypes = {
+    searchFoods: PropTypes.func.isRequired,
+    clearFoods: PropTypes.func.isRequired,
+    showClear: PropTypes.bool.isRequired,
+    setAlert: PropTypes.func.isRequired,
+};
+
 
 export default Search
