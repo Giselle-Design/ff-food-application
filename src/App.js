@@ -11,6 +11,13 @@ import About from './components/pages/About'
 
 import axios from 'axios';
 
+let findfoodId;
+
+if (process.env.NODE_ENV !== "production"){
+  findfoodId = process.env.REACT_APP_FAVOURITE_FOOD_ID
+}else {
+  findfoodId = process.env.FAVOURITE_FOOD_ID
+}
 
 const App = () => {
   const [ foods, setFoods ] = useState([]);
@@ -28,7 +35,7 @@ const App = () => {
       url: 'https://tasty.p.rapidapi.com/recipes/list',
       params: {from: '0', size: '20', tags: 'under_30_minutes', q: `${text}`},
       headers: {
-        'x-rapidapi-key': `${process.env.REACT_APP_FAVOURITE_FOOD_ID}`,
+        'x-rapidapi-key': `${findfoodId}`,
         'x-rapidapi-host': 'tasty.p.rapidapi.com'
       }
     };
@@ -55,7 +62,7 @@ const App = () => {
       url: 'https://tasty.p.rapidapi.com/recipes/detail',
       params: {id: `${favFood}`},
       headers: {
-        'x-rapidapi-key': `${process.env.REACT_APP_FAVOURITE_FOOD_ID}`,
+        'x-rapidapi-key': `${findfoodId}`,
         'x-rapidapi-host': 'tasty.p.rapidapi.com'
       }
     };
